@@ -17,21 +17,24 @@ interface IProps {
   food: IFoodPlate;
   handleDelete: (id: number) => {};
   handleEditFood: (food: IFoodPlate) => void;
+  handleStatus: (food: IFoodPlate) => void;
 }
 
 const Food: React.FC<IProps> = ({
   food,
   handleDelete,
   handleEditFood,
+  handleStatus,
 }: IProps) => {
   const [isAvailable, setIsAvailable] = useState(food.available);
 
-  async function toggleAvailable(): Promise<void> {
-    // TODO UPDATE STATUS (available)
+  async function toggleAvailable(item: IFoodPlate): Promise<void> {
+    setIsAvailable(!item.available);
+    handleStatus({ ...item, available: !item.available });
   }
 
-  function setEditingFood(): void {
-    // TODO - SET THE ID OF THE CURRENT ITEM TO THE EDITING FOOD AND OPEN MODAL
+  function setEditingFood(item: IFoodPlate): void {
+    handleEditFood(item);
   }
 
   return (
@@ -51,7 +54,7 @@ const Food: React.FC<IProps> = ({
           <button
             type="button"
             className="icon"
-            onClick={() => setEditingFood()}
+            onClick={() => setEditingFood(food)}
             data-testid={`edit-food-${food.id}`}
           >
             <FiEdit3 size={20} />
@@ -75,7 +78,7 @@ const Food: React.FC<IProps> = ({
               id={`available-switch-${food.id}`}
               type="checkbox"
               checked={isAvailable}
-              onChange={toggleAvailable}
+              onChange={() => toggleAvailable(food)}
               data-testid={`change-status-food-${food.id}`}
             />
             <span className="slider" />
